@@ -6,6 +6,7 @@ import bs4
 import re
 import requests
 import random
+import time
 
 from . import _graphql, _util, _exception
 
@@ -41,6 +42,7 @@ def client_id_factory():
 
 def is_home(url):
     parts = _util.urlparse(url)
+    time.sleep(5)
     # Check the urls `/home.php` and `/`
     return "home" in parts.path or "/" == parts.path
 
@@ -150,6 +152,7 @@ class State(object):
             r = session.get("https://m.facebook.com/login/save-device/cancel/")
 
         if is_home(r.url):
+            time.sleep(10)
             return cls.from_session(session=session)
         else:
             raise _exception.FBchatUserError(
@@ -160,6 +163,7 @@ class State(object):
     def is_logged_in(self):
         # Send a request to the login url, to see if we're directed to the home page
         url = "https://m.facebook.com/login.php?login_attempt=1"
+        time.sleep(2)
         r = self._session.get(url, allow_redirects=False)
         return "Location" in r.headers and is_home(r.headers["Location"])
 
