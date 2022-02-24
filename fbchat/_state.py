@@ -10,7 +10,7 @@ import time
 
 from . import _graphql, _util, _exception
 
-FB_DTSG_REGEX = re.compile(r'name="fb_dtsg" value="(.*?)"')
+FB_DTSG_REGEX = re.compile(r'"fb_dtsg","value":"(.*?)"')
 
 
 def get_user_id(session):
@@ -194,8 +194,7 @@ class State(object):
             # Fall back to searching with a regex
             fb_dtsg = FB_DTSG_REGEX.search(r.text).group(1)
 
-        revision = int(r.text.split('"client_revision":', 1)
-                       [1].split(",", 1)[0])
+        revision = 1
 
         logout_h_element = soup.find("input", {"name": "h"})
         logout_h = logout_h_element["value"] if logout_h_element else None
