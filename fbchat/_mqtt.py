@@ -273,22 +273,20 @@ class Mqtt(object):
         Returns whether to keep listening or not.
         """
         rc = self._mqtt.loop(timeout=1.0)
-        
- 
+
+        # If disconnect() has been called
         if self._mqtt._state == paho.mqtt.client.mqtt_cs_disconnecting:
             return False  # Stop listening
 
-            if rc != paho.mqtt.client.MQTT_ERR_SUCCESS:
+        if rc != paho.mqtt.client.MQTT_ERR_SUCCESS:
             # If known/expected error
-                if rc == paho.mqtt.client.MQTT_ERR_CONN_LOST:
-                    log.warning("Connection lost, retrying")
-        elif rc == paho.mqtt.client.MQTT_ERR_NOMEM:
-          
-           
+            if rc == paho.mqtt.client.MQTT_ERR_CONN_LOST:
+                log.warning("Connection lost, retrying")
+            elif rc == paho.mqtt.client.MQTT_ERR_NOMEM:
                 # This error is wrongly classified
                 # See https://github.com/eclipse/paho.mqtt.python/issues/340
                 log.warning("Connection error, retrying")
-            if rc == paho.mqtt.client.MQTT_ERR_CONN_REFUSED:
+            elif rc == paho.mqtt.client.MQTT_ERR_CONN_REFUSED:
                 raise _exception.FBchatNotLoggedIn("MQTT connection refused")
             else:
                 err = paho.mqtt.client.error_string(rc)
